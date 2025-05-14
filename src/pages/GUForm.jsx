@@ -1,48 +1,44 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function AccommodationForm() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
+    locale: "gu",
     address: "",
     city: "",
     country: "",
-    mobileNo: "",
     email: "",
-    arrivalDate: "",
-    departureDate: "",
     totalMembers: "1",
-    adults: "1",
-    kids: "0",
-    SeniorCitizen: "",
     members: [
       {
-        firstName: "",
-        middleName: "",
-        lastName: "",
+        first_name: "",
+        middle_name: "",
+        last_name: "",
         age: "",
-        joinSeva: false,
-        sevaDepartment: "",
+        isSeva: false,
+        mobile_no: "",
+        arrival_date: "",
+        departure_date: "",
+        skill: "",
+        department: "",
       },
     ],
-    skills: "",
   });
 
   const [suggestions, setAddressSuggestions] = useState([]);
   const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const navigate = useNavigate();
   // Simulated address suggestions
   const mockAddresses = [
-    "123 મેઈન સ્ટ્રીટ, અટલાન્ટા, યુએસએ",
-    "456 ઓક એવેન્યુ, લંડન, યુકે",
-    "789 પટેલ રોડ, અમદાવાદ, ભારત",
-    "101 ક્વીન સ્ટ્રીટ, ટોરોન્ટો, કેનેડા",
-    "202 એલિઝાબેથ સ્ટ્રીટ, સિડની, ઓસ્ટ્રેલિયા",
+    "123 Main St, Atlanta, USA",
+    "456 Oak Ave, London, UK",
+    "789 Patel Road, Ahmedabad, India",
+    "101 Queen St, Toronto, Canada",
+    "202 Elizabeth St, Sydney, Australia",
   ];
 
   // Minimum date constraints
@@ -54,9 +50,9 @@ export default function AccommodationForm() {
   // Department options
   const departments = [
     "રસોડું",
-    "કમ્પ્યુટર/હિસાબ",
+    "કોમ્પ્યુટર/એકાઉન્ટ્સ",
     "વરિષ્ઠ નાગરિક",
-    "તબીબી",
+    "મેડિકલ",
     "પરિવહન",
     "સફાઈ",
     "નોંધણી",
@@ -107,12 +103,16 @@ export default function AccommodationForm() {
         // Add new member fields
         for (let i = currentCount; i < totalCount; i++) {
           updatedMembers.push({
-            firstName: "",
-            middleName: "",
-            lastName: "",
+            first_name: "",
+            middle_name: "",
+            last_name: "",
             age: "",
-            joinSeva: false,
-            sevaDepartment: "",
+            isSeva: false,
+            mobile_no: "",
+            arrival_date: "",
+            departure_date: "",
+            skill: "",
+            department: "",
           });
         }
       } else if (totalCount < currentCount) {
@@ -130,34 +130,27 @@ export default function AccommodationForm() {
     }
   };
 
-  // Handle member data changes
+  // Handle member age change with conditional seva showing
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...formData.members];
     updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+
+    // If age is changed and becomes <= 15, set isSeva to false
+    if (field === "age") {
+      const age = parseInt(value);
+      if (!isNaN(age) && age <= 15) {
+        updatedMembers[index].isSeva = false;
+      }
+    }
+
     setFormData({ ...formData, members: updatedMembers });
   };
 
-  // Handle member skills change
-  const handleSkillsChange = (e) => {
-    setFormData({ ...formData, skills: e.target.value });
-  };
-
-  // Handle department selection
-  const handleDepartmentChange = (e) => {
-    setFormData({ ...formData, department: e.target.value });
-  };
-
-  // Set join seva status for all members
-  const setWantToJoin = (value) => {
-    const updatedMembers = formData.members.map((member) => ({
-      ...member,
-      joinSeva: value,
-    }));
-
-    setFormData({
-      ...formData,
-      members: updatedMembers,
-    });
+  // Set join seva status for a specific member
+  const setMemberSevaStatus = (index, value) => {
+    const updatedMembers = [...formData.members];
+    updatedMembers[index] = { ...updatedMembers[index], isSeva: value };
+    setFormData({ ...formData, members: updatedMembers });
   };
 
   // Form validation
@@ -165,44 +158,25 @@ export default function AccommodationForm() {
     const errors = {};
 
     // Validate email
-    if (!formData.email) {
-      errors.email = "ઈમેલ જરૂરી છે";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "ઈમેલ અમાન્ય છે";
-    }
+    // if (!formData.email) {
+    //   errors.email = "ઈમેઈલ આવશ્યક છે";
+    // } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    //   errors.email = "ઈમેઈલ અમાન્ય છે";
+    // }
 
     // Validate address
     if (!formData.address) {
-      errors.address = "સરનામું જરૂરી છે";
+      errors.address = "સરનામું આવશ્યક છે";
     }
 
     // Validate city
     if (!formData.city) {
-      errors.city = "શહેર જરૂરી છે";
+      errors.city = "શહેર આવશ્યક છે";
     }
 
     // Validate country
     if (!formData.country) {
-      errors.country = "દેશ જરૂરી છે";
-    }
-
-    // Validate mobile number
-    if (!formData.mobileNo) {
-      errors.mobileNo = "મોબાઈલ નંબર જરૂરી છે";
-    }
-
-    // Validate dates
-    if (!formData.arrivalDate) {
-      errors.arrivalDate = "આગમન તારીખ જરૂરી છે";
-    }
-
-    if (!formData.departureDate) {
-      errors.departureDate = "પ્રસ્થાન તારીખ જરૂરી છે";
-    } else if (
-      formData.arrivalDate &&
-      new Date(formData.departureDate) < new Date(formData.arrivalDate)
-    ) {
-      errors.departureDate = "પ્રસ્થાન તારીખ આગમન તારીખ પછી હોવી જોઈએ";
+      errors.country = "દેશ આવશ્યક છે";
     }
 
     // Validate member information
@@ -210,26 +184,41 @@ export default function AccommodationForm() {
     formData.members.forEach((member, index) => {
       const memberError = {};
 
-      if (!member.firstName) {
-        memberError.firstName = "પ્રથમ નામ જરૂરી છે";
+      if (!member.first_name) {
+        memberError.first_name = "પ્રથમ નામ આવશ્યક છે";
       }
-
-      if (!member.middleName) {
-        memberError.middleName = "મધ્ય નામ જરૂરી છે";
+      if (!member.middle_name) {
+        memberError.middle_name = "પિતાનું નામ આવશ્યક છે";
       }
-
-      if (!member.lastName) {
-        memberError.lastName = "અટક જરૂરી છે";
+      if (!member.last_name) {
+        memberError.last_name = "અટક આવશ્યક છે";
       }
 
       if (!member.age) {
-        memberError.age = "ઉંમર જરૂરી છે";
+        memberError.age = "ઉંમર આવશ્યક છે";
       } else if (
         isNaN(member.age) ||
         parseInt(member.age) < 0 ||
         parseInt(member.age) > 120
       ) {
         memberError.age = "ઉંમર 0-120 વચ્ચે હોવી જોઈએ";
+      }
+
+      if (!member.mobile_no) {
+        memberError.mobile_no = "મોબાઈલ નંબર આવશ્યક છે";
+      }
+
+      if (!member.arrival_date) {
+        memberError.arrival_date = "આગમન તારીખ આવશ્યક છે";
+      }
+
+      if (!member.departure_date) {
+        memberError.departure_date = "પ્રસ્થાન તારીખ આવશ્યક છે";
+      } else if (
+        member.arrival_date &&
+        new Date(member.departure_date) < new Date(member.arrival_date)
+      ) {
+        memberError.departure_date = "પ્રસ્થાન તારીખ આગમન તારીખ પછી હોવી જોઈએ";
       }
 
       if (Object.keys(memberError).length > 0) {
@@ -264,11 +253,64 @@ export default function AccommodationForm() {
             },
           }
         );
-        toast.success("ફોર્મ સફળતાપૂર્વક સબમિટ થયું:", response.data);
+
+        const data = response.data;
+
+        // Handle status check
+        if (data.status === false) {
+          const apiErrors = {};
+          const messages = [];
+
+          // Process API error responses
+          for (const key in data.response) {
+            if (key.startsWith("members.")) {
+              // Extract member index and field name from the error key (e.g., "members.0.mobile_no")
+              const parts = key.split(".");
+              if (parts.length === 3) {
+                const memberIndex = parseInt(parts[1]);
+                const fieldName = parts[2];
+
+                // Initialize the members errors array if it doesn't exist
+                if (!apiErrors.members) {
+                  apiErrors.members = [];
+                }
+
+                // Initialize the specific member's errors if they don't exist
+                if (!apiErrors.members[memberIndex]) {
+                  apiErrors.members[memberIndex] = {};
+                }
+
+                // Add the error message for this specific field
+                apiErrors.members[memberIndex][fieldName] =
+                  data.response[key].join(", ");
+              }
+            } else {
+              // Handle non-member specific errors
+              apiErrors[key] = data.response[key].join(", ");
+            }
+
+            // Also collect all messages for general display
+            messages.push(...data.response[key]);
+          }
+
+          // Merge with existing form errors
+          setFormErrors({
+            ...apiErrors,
+            submit: messages.join("\n"),
+          });
+
+          console.log("API validation errors:", apiErrors);
+          toast.error("માન્યતા નિષ્ફળ. કૃપા કરીને ભૂલો તપાસો.");
+          return;
+        }
+
+        navigate("/gu-thanku");
+        toast.success("ફોર્મ સફળતાપૂર્વક સબમિટ થયું!");
+        console.log(response);
       } catch (error) {
-        console.error("ફોર્મ સબમિટ કરવામાં ભૂલ:", error);
+        console.error("Error submitting form:", error);
         setFormErrors({
-          submit: "એક ભૂલ આવી. કૃપા કરી ફરી પ્રયાસ કરો.",
+          submit: "એક ભૂલ આવી. કૃપા કરીને ફરી પ્રયાસ કરો.",
         });
       } finally {
         setIsSubmitting(false);
@@ -285,7 +327,7 @@ export default function AccommodationForm() {
             જય સ્વામિનારાયણ
           </h1>
           <h2 className="text-2xl font-semibold text-gray-800 mt-2">
-            જન્મમંગલ મહોત્સવ ૨૦૨૬
+            જન્મંગલ મહોત્સવ ૨૦૨૬
           </h2>
           <h3 className="text-xl text-gray-700">એનઆરઆઈ અસ્થાયી આવાસ વિનંતી</h3>
         </div>
@@ -307,7 +349,7 @@ export default function AccommodationForm() {
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    ઈમેલ*
+                    ઈમેઈલ
                   </label>
                   <div className="relative">
                     <input
@@ -318,7 +360,7 @@ export default function AccommodationForm() {
                       className={`w-full px-3 py-2 border ${
                         formErrors.email ? "border-red-500" : "border-gray-300"
                       } rounded-md`}
-                      placeholder="ઈમેલ સરનામું"
+                      placeholder="ઈમેઈલ એડ્રેસ"
                     />
                   </div>
                   {formErrors.email && (
@@ -462,52 +504,56 @@ export default function AccommodationForm() {
                       </label>
                       <input
                         type="text"
-                        value={member.firstName}
+                        value={member.first_name}
                         onChange={(e) =>
-                          handleMemberChange(index, "firstName", e.target.value)
+                          handleMemberChange(
+                            index,
+                            "first_name",
+                            e.target.value
+                          )
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.firstName
+                          formErrors.members[index]?.first_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
                         placeholder="પ્રથમ નામ"
                       />
                       {formErrors.members &&
-                        formErrors.members[index]?.firstName && (
+                        formErrors.members[index]?.first_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].firstName}
+                            {formErrors.members[index].first_name}
                           </p>
                         )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        મધ્ય નામ
+                        પિતાનું નામ*
                       </label>
                       <input
                         type="text"
-                        value={member.middleName}
+                        value={member.middle_name}
                         onChange={(e) =>
                           handleMemberChange(
                             index,
-                            "middleName",
+                            "middle_name",
                             e.target.value
                           )
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.middleName
+                          formErrors.members[index]?.middle_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
-                        placeholder="મધ્ય નામ"
-                      />{" "}
+                        placeholder="પિતાનું નામ"
+                      />
                       {formErrors.members &&
-                        formErrors.members[index]?.middleName && (
+                        formErrors.members[index]?.middle_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].middleName}
+                            {formErrors.members[index].middle_name}
                           </p>
                         )}
                     </div>
@@ -518,22 +564,22 @@ export default function AccommodationForm() {
                       </label>
                       <input
                         type="text"
-                        value={member.lastName}
+                        value={member.last_name}
                         onChange={(e) =>
-                          handleMemberChange(index, "lastName", e.target.value)
+                          handleMemberChange(index, "last_name", e.target.value)
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.lastName
+                          formErrors.members[index]?.last_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
                         placeholder="અટક"
                       />
                       {formErrors.members &&
-                        formErrors.members[index]?.lastName && (
+                        formErrors.members[index]?.last_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].lastName}
+                            {formErrors.members[index].last_name}
                           </p>
                         )}
                     </div>
@@ -570,23 +616,30 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="tel"
-                          name="mobileNo"
-                          value={formData.mobileNo}
+                          value={member.mobile_no}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "mobile_no",
+                              e.target.value
+                            )
+                          }
                           placeholder="મોબાઈલ નંબર"
-                          onChange={handleChange}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.mobileNo
+                            formErrors.members &&
+                            formErrors.members[index]?.mobile_no
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
                         />
                       </div>
 
-                      {formErrors.mobileNo && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.mobileNo}
-                        </p>
-                      )}
+                      {formErrors.members &&
+                        formErrors.members[index]?.mobile_no && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].mobile_no}
+                          </p>
+                        )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -595,13 +648,19 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="date"
-                          name="arrivalDate"
-                          value={formData.arrivalDate}
-                          onChange={handleChange}
+                          value={member.arrival_date}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "arrival_date",
+                              e.target.value
+                            )
+                          }
                           min={minArrivalDate}
                           max={maxArrivalDate}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.arrivalDate
+                            formErrors.members &&
+                            formErrors.members[index]?.arrival_date
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
@@ -610,11 +669,12 @@ export default function AccommodationForm() {
                       <p className="text-xs text-gray-500 mt-1">
                         ડિસેમ્બર 01, 2025 - જાન્યુઆરી 20, 2026 વચ્ચે
                       </p>
-                      {formErrors.arrivalDate && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.arrivalDate}
-                        </p>
-                      )}
+                      {formErrors.members &&
+                        formErrors.members[index]?.arrival_date && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].arrival_date}
+                          </p>
+                        )}
                     </div>
 
                     <div>
@@ -624,13 +684,19 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="date"
-                          name="departureDate"
-                          value={formData.departureDate}
-                          onChange={handleChange}
-                          min={formData.arrivalDate || minDepartureDate}
+                          value={member.departure_date}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "departure_date",
+                              e.target.value
+                            )
+                          }
+                          min={member.arrival_date || minDepartureDate}
                           max={maxDepartureDate}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.departureDate
+                            formErrors.members &&
+                            formErrors.members[index]?.departure_date
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
@@ -639,81 +705,94 @@ export default function AccommodationForm() {
                       <p className="text-xs text-gray-500 mt-1">
                         ડિસેમ્બર 01, 2025 - જાન્યુઆરી 20, 2026 વચ્ચે
                       </p>
-                      {formErrors.departureDate && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.departureDate}
-                        </p>
+                      {formErrors.members &&
+                        formErrors.members[index]?.departure_date && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].departure_date}
+                          </p>
+                        )}
+                    </div>
+                  </div>
+                  {/* Seva Section - only show if age > 15 */}
+                  {member.age && parseInt(member.age) > 15 && (
+                    <div className="mb-4">
+                      <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+                        શું તમે સેવામાં જોડાવા માંગો છો?
+                      </h3>
+
+                      <div className="flex items-center space-x-4 mb-4">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="h-5 w-5 text-blue-600"
+                            checked={member.isSeva === true}
+                            onChange={() => setMemberSevaStatus(index, true)}
+                          />
+                          <span className="ml-2">હા</span>
+                        </label>
+
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="h-5 w-5 text-blue-600"
+                            checked={member.isSeva === false}
+                            onChange={() => setMemberSevaStatus(index, false)}
+                          />
+                          <span className="ml-2">ના</span>
+                        </label>
+                      </div>
+
+                      {member.isSeva && (
+                        <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                તમારી કુશળતા/ અન્ય નોંધ
+                              </label>
+                              <input
+                                type="text"
+                                value={member.skill}
+                                onChange={(e) =>
+                                  handleMemberChange(
+                                    index,
+                                    "skill",
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                કયા વિભાગમાં સેવા આપવા ઇચ્છો છો?
+                              </label>
+                              <select
+                                value={member.department}
+                                onChange={(e) =>
+                                  handleMemberChange(
+                                    index,
+                                    "department",
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              >
+                                <option value="">વિભાગ પસંદ કરો</option>
+                                {departments.map((dept) => (
+                                  <option key={dept} value={dept}>
+                                    {dept}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
-            </div>
-
-            {/* Seva Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
-                શું તમે સેવામાં જોડાવા માંગો છો?
-              </h3>
-
-              <div className="flex items-center space-x-4 mb-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    className="h-5 w-5 text-blue-600"
-                    checked={formData.members[0]?.joinSeva === true}
-                    onChange={() => setWantToJoin(true)}
-                  />
-                  <span className="ml-2">હા</span>
-                </label>
-
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    className="h-5 w-5 text-blue-600"
-                    checked={formData.members[0]?.joinSeva === false}
-                    onChange={() => setWantToJoin(false)}
-                  />
-                  <span className="ml-2">ના</span>
-                </label>
-              </div>
-              {formData.members[0]?.joinSeva && (
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        તમારા કૌશલ્યો/અન્ય નોંધો
-                      </label>
-                      <input
-                        type="text"
-                        name="skills"
-                        value={formData.skills}
-                        onChange={handleSkillsChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        કયા વિભાગમાં સેવા આપવા ઇચ્છો છો?
-                      </label>
-                      <select
-                        name="department"
-                        value={formData.department}
-                        onChange={handleDepartmentChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      >
-                        <option value="">વિભાગ પસંદ કરો</option>
-                        {departments.map((dept) => (
-                          <option key={dept} value={dept}>
-                            {dept}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Form Actions */}

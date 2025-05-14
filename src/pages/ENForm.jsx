@@ -1,41 +1,37 @@
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function AccommodationForm() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
+    locale:"en",
     address: "",
     city: "",
     country: "",
-    mobileNo: "",
     email: "",
-    arrivalDate: "",
-    departureDate: "",
     totalMembers: "1",
-    adults: "1",
-    kids: "0",
-    SeniorCitizen: "",
     members: [
       {
-        firstName: "",
-        middleName: "",
-        lastName: "",
+        first_name: "",
+        middle_name: "",
+        last_name: "",
         age: "",
-        joinSeva: false,
-        sevaDepartment: "",
+        isSeva: false,
+        mobile_no: "",
+        arrival_date: "",
+        departure_date: "",
+        skill: "",
+        department: "",
       },
     ],
-    skills: "",
   });
 
   const [suggestions, setAddressSuggestions] = useState([]);
   const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const navigate = useNavigate()
   // Simulated address suggestions
   const mockAddresses = [
     "123 Main St, Atlanta, USA",
@@ -107,12 +103,16 @@ export default function AccommodationForm() {
         // Add new member fields
         for (let i = currentCount; i < totalCount; i++) {
           updatedMembers.push({
-            firstName: "",
-            middleName: "",
-            lastName: "",
+            first_name: "",
+            middle_name: "",
+            last_name: "",
             age: "",
-            joinSeva: false,
-            sevaDepartment: "",
+            isSeva: false,
+            mobile_no: "",
+            arrival_date: "",
+            departure_date: "",
+            skill: "",
+            department: "",
           });
         }
       } else if (totalCount < currentCount) {
@@ -130,34 +130,27 @@ export default function AccommodationForm() {
     }
   };
 
-  // Handle member data changes
+  // Handle member age change with conditional seva showing
   const handleMemberChange = (index, field, value) => {
     const updatedMembers = [...formData.members];
     updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+
+    // If age is changed and becomes <= 15, set isSeva to false
+    if (field === "age") {
+      const age = parseInt(value);
+      if (!isNaN(age) && age <= 15) {
+        updatedMembers[index].isSeva = false;
+      }
+    }
+
     setFormData({ ...formData, members: updatedMembers });
   };
 
-  // Handle member skills change
-  const handleSkillsChange = (e) => {
-    setFormData({ ...formData, skills: e.target.value });
-  };
-
-  // Handle department selection
-  const handleDepartmentChange = (e) => {
-    setFormData({ ...formData, department: e.target.value });
-  };
-
-  // Set join seva status for all members
-  const setWantToJoin = (value) => {
-    const updatedMembers = formData.members.map((member) => ({
-      ...member,
-      joinSeva: value,
-    }));
-
-    setFormData({
-      ...formData,
-      members: updatedMembers,
-    });
+  // Set join seva status for a specific member
+  const setMemberSevaStatus = (index, value) => {
+    const updatedMembers = [...formData.members];
+    updatedMembers[index] = { ...updatedMembers[index], isSeva: value };
+    setFormData({ ...formData, members: updatedMembers });
   };
 
   // Form validation
@@ -186,40 +179,19 @@ export default function AccommodationForm() {
       errors.country = "Country is required";
     }
 
-    // Validate mobile number
-    if (!formData.mobileNo) {
-      errors.mobileNo = "Mobile number is required";
-    }
-
-    // Validate dates
-    if (!formData.arrivalDate) {
-      errors.arrivalDate = "Arrival date is required";
-    }
-
-    if (!formData.departureDate) {
-      errors.departureDate = "Departure date is required";
-    } else if (
-      formData.arrivalDate &&
-      new Date(formData.departureDate) < new Date(formData.arrivalDate)
-    ) {
-      errors.departureDate = "Departure date must be after arrival date";
-    }
-
     // Validate member information
     const memberErrors = [];
     formData.members.forEach((member, index) => {
       const memberError = {};
 
-      if (!member.firstName) {
-        memberError.firstName = "First name is required";
+      if (!member.first_name) {
+        memberError.first_name = "First name is required";
       }
-
-      if (!member.middleName) {
-        memberError.middleName = "Middle name is required";
+      if (!member.middle_name) {
+        memberError.middle_name = "Middle name is required";
       }
-
-      if (!member.lastName) {
-        memberError.lastName = "Last name is required";
+      if (!member.last_name) {
+        memberError.last_name = "Last name is required";
       }
 
       if (!member.age) {
@@ -230,6 +202,24 @@ export default function AccommodationForm() {
         parseInt(member.age) > 120
       ) {
         memberError.age = "Age must be between 0-120";
+      }
+
+      if (!member.mobile_no) {
+        memberError.mobile_no = "Mobile number is required";
+      }
+
+      if (!member.arrival_date) {
+        memberError.arrival_date = "Arrival date is required";
+      }
+
+      if (!member.departure_date) {
+        memberError.departure_date = "Departure date is required";
+      } else if (
+        member.arrival_date &&
+        new Date(member.departure_date) < new Date(member.arrival_date)
+      ) {
+        memberError.departure_date =
+          "Departure date must be after arrival date";
       }
 
       if (Object.keys(memberError).length > 0) {
@@ -264,8 +254,60 @@ export default function AccommodationForm() {
             },
           }
         );
-        toast.success("Form submitted successfully:", response.data);
 
+        const data = response.data;
+
+        // Handle status check
+        if (data.status === false) {
+          const apiErrors = {};
+          const messages = [];
+
+          // Process API error responses
+          for (const key in data.response) {
+            if (key.startsWith("members.")) {
+              // Extract member index and field name from the error key (e.g., "members.0.mobile_no")
+              const parts = key.split(".");
+              if (parts.length === 3) {
+                const memberIndex = parseInt(parts[1]);
+                const fieldName = parts[2];
+
+                // Initialize the members errors array if it doesn't exist
+                if (!apiErrors.members) {
+                  apiErrors.members = [];
+                }
+
+                // Initialize the specific member's errors if they don't exist
+                if (!apiErrors.members[memberIndex]) {
+                  apiErrors.members[memberIndex] = {};
+                }
+
+                // Add the error message for this specific field
+                apiErrors.members[memberIndex][fieldName] =
+                  data.response[key].join(", ");
+              }
+            } else {
+              // Handle non-member specific errors
+              apiErrors[key] = data.response[key].join(", ");
+            }
+
+            // Also collect all messages for general display
+            messages.push(...data.response[key]);
+          }
+
+          // Merge with existing form errors
+          setFormErrors({
+            ...apiErrors,
+            submit: messages.join("\n"),
+          });
+
+          console.log("API validation errors:", apiErrors);
+          toast.error("Validation failed. Please check the errors.");
+          return;
+        }
+
+        navigate("/en-thanku");
+        toast.success("Form submitted successfully!");
+        console.log(response);
       } catch (error) {
         console.error("Error submitting form:", error);
         setFormErrors({
@@ -310,7 +352,7 @@ export default function AccommodationForm() {
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Email*
+                    Email
                   </label>
                   <div className="relative">
                     <input
@@ -465,52 +507,56 @@ export default function AccommodationForm() {
                       </label>
                       <input
                         type="text"
-                        value={member.firstName}
+                        value={member.first_name}
                         onChange={(e) =>
-                          handleMemberChange(index, "firstName", e.target.value)
+                          handleMemberChange(
+                            index,
+                            "first_name",
+                            e.target.value
+                          )
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.firstName
+                          formErrors.members[index]?.first_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
                         placeholder="First Name"
                       />
                       {formErrors.members &&
-                        formErrors.members[index]?.firstName && (
+                        formErrors.members[index]?.first_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].firstName}
+                            {formErrors.members[index].first_name}
                           </p>
                         )}
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Middle Name
+                        Middle Name*
                       </label>
                       <input
                         type="text"
-                        value={member.middleName}
+                        value={member.middle_name}
                         onChange={(e) =>
                           handleMemberChange(
                             index,
-                            "middleName",
+                            "middle_name",
                             e.target.value
                           )
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.middleName
+                          formErrors.members[index]?.middle_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
                         placeholder="Middle Name"
-                      />{" "}
+                      />
                       {formErrors.members &&
-                        formErrors.members[index]?.middleName && (
+                        formErrors.members[index]?.middle_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].middleName}
+                            {formErrors.members[index].middle_name}
                           </p>
                         )}
                     </div>
@@ -521,22 +567,22 @@ export default function AccommodationForm() {
                       </label>
                       <input
                         type="text"
-                        value={member.lastName}
+                        value={member.last_name}
                         onChange={(e) =>
-                          handleMemberChange(index, "lastName", e.target.value)
+                          handleMemberChange(index, "last_name", e.target.value)
                         }
                         className={`w-full px-3 py-2 border ${
                           formErrors.members &&
-                          formErrors.members[index]?.lastName
+                          formErrors.members[index]?.last_name
                             ? "border-red-500"
                             : "border-gray-300"
                         } rounded-md`}
                         placeholder="Last Name"
                       />
                       {formErrors.members &&
-                        formErrors.members[index]?.lastName && (
+                        formErrors.members[index]?.last_name && (
                           <p className="text-red-500 text-xs mt-1">
-                            {formErrors.members[index].lastName}
+                            {formErrors.members[index].last_name}
                           </p>
                         )}
                     </div>
@@ -573,23 +619,30 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="tel"
-                          name="mobileNo"
-                          value={formData.mobileNo}
+                          value={member.mobile_no}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "mobile_no",
+                              e.target.value
+                            )
+                          }
                           placeholder="Mobile No"
-                          onChange={handleChange}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.mobileNo
+                            formErrors.members &&
+                            formErrors.members[index]?.mobile_no
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
                         />
                       </div>
 
-                      {formErrors.mobileNo && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.mobileNo}
-                        </p>
-                      )}
+                      {formErrors.members &&
+                        formErrors.members[index]?.mobile_no && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].mobile_no}
+                          </p>
+                        )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -598,13 +651,19 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="date"
-                          name="arrivalDate"
-                          value={formData.arrivalDate}
-                          onChange={handleChange}
+                          value={member.arrival_date}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "arrival_date",
+                              e.target.value
+                            )
+                          }
                           min={minArrivalDate}
                           max={maxArrivalDate}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.arrivalDate
+                            formErrors.members &&
+                            formErrors.members[index]?.arrival_date
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
@@ -613,11 +672,12 @@ export default function AccommodationForm() {
                       <p className="text-xs text-gray-500 mt-1">
                         Between Dec 01, 2025 - Jan 20, 2026
                       </p>
-                      {formErrors.arrivalDate && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.arrivalDate}
-                        </p>
-                      )}
+                      {formErrors.members &&
+                        formErrors.members[index]?.arrival_date && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].arrival_date}
+                          </p>
+                        )}
                     </div>
 
                     <div>
@@ -627,13 +687,19 @@ export default function AccommodationForm() {
                       <div className="relative">
                         <input
                           type="date"
-                          name="departureDate"
-                          value={formData.departureDate}
-                          onChange={handleChange}
-                          min={formData.arrivalDate || minDepartureDate}
+                          value={member.departure_date}
+                          onChange={(e) =>
+                            handleMemberChange(
+                              index,
+                              "departure_date",
+                              e.target.value
+                            )
+                          }
+                          min={member.arrival_date || minDepartureDate}
                           max={maxDepartureDate}
                           className={`w-full px-3 py-2 border ${
-                            formErrors.departureDate
+                            formErrors.members &&
+                            formErrors.members[index]?.departure_date
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
@@ -642,81 +708,94 @@ export default function AccommodationForm() {
                       <p className="text-xs text-gray-500 mt-1">
                         Between Dec 01, 2025 - Jan 20, 2026
                       </p>
-                      {formErrors.departureDate && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {formErrors.departureDate}
-                        </p>
+                      {formErrors.members &&
+                        formErrors.members[index]?.departure_date && (
+                          <p className="text-red-500 text-xs mt-1">
+                            {formErrors.members[index].departure_date}
+                          </p>
+                        )}
+                    </div>
+                  </div>
+                  {/* Seva Section - only show if age > 15 */}
+                  {member.age && parseInt(member.age) > 15 && (
+                    <div className="mb-4">
+                      <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+                        Do You Want to join Seva?
+                      </h3>
+
+                      <div className="flex items-center space-x-4 mb-4">
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="h-5 w-5 text-blue-600"
+                            checked={member.isSeva === true}
+                            onChange={() => setMemberSevaStatus(index, true)}
+                          />
+                          <span className="ml-2">Yes</span>
+                        </label>
+
+                        <label className="flex items-center">
+                          <input
+                            type="radio"
+                            className="h-5 w-5 text-blue-600"
+                            checked={member.isSeva === false}
+                            onChange={() => setMemberSevaStatus(index, false)}
+                          />
+                          <span className="ml-2">No</span>
+                        </label>
+                      </div>
+
+                      {member.isSeva && (
+                        <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                          <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                Your Skills/ Other Notes
+                              </label>
+                              <input
+                                type="text"
+                                value={member.skill}
+                                onChange={(e) =>
+                                  handleMemberChange(
+                                    index,
+                                    "skill",
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                Which department would you like to serve in?
+                              </label>
+                              <select
+                                value={member.department}
+                                onChange={(e) =>
+                                  handleMemberChange(
+                                    index,
+                                    "department",
+                                    e.target.value
+                                  )
+                                }
+                                className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
+                              >
+                                <option value="">Select Department</option>
+                                {departments.map((dept) => (
+                                  <option key={dept} value={dept}>
+                                    {dept}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </div>
+                        </div>
                       )}
                     </div>
-                  </div>
+                  )}
                 </div>
               ))}
-            </div>
-
-            {/* Seva Section */}
-            <div className="mb-8">
-              <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
-                Do You Want to join Seva?
-              </h3>
-
-              <div className="flex items-center space-x-4 mb-4">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    className="h-5 w-5 text-blue-600"
-                    checked={formData.members[0]?.joinSeva === true}
-                    onChange={() => setWantToJoin(true)}
-                  />
-                  <span className="ml-2">Yes</span>
-                </label>
-
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    className="h-5 w-5 text-blue-600"
-                    checked={formData.members[0]?.joinSeva === false}
-                    onChange={() => setWantToJoin(false)}
-                  />
-                  <span className="ml-2">No</span>
-                </label>
-              </div>
-              {formData.members[0]?.joinSeva && (
-                <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Your Skills/ Other Notes
-                      </label>
-                      <input
-                        type="text"
-                        name="skills"
-                        value={formData.skills}
-                        onChange={handleSkillsChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700">
-                        Which department would you like to serve in?
-                      </label>
-                      <select
-                        name="department"
-                        value={formData.department}
-                        onChange={handleDepartmentChange}
-                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3"
-                      >
-                        <option value="">Select Department</option>
-                        {departments.map((dept) => (
-                          <option key={dept} value={dept}>
-                            {dept}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Form Actions */}
@@ -738,7 +817,7 @@ export default function AccommodationForm() {
             </div>
           </div>
         </form>
-        {/* Form Actions */}
+        {/* Footer */}
         <div className="text-center text-gray-500 text-sm pb-8">
           © 2025 Janmangal Mahotsav Committee. All rights reserved.
         </div>
