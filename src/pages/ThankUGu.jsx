@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../public/logo.png";
+import logo from "../../public/janmangal logo.png";
 
 function ThankUGu() {
   const [textVisible, setTextVisible] = useState(false);
@@ -21,22 +21,8 @@ function ThankUGu() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 p-4">
       {/* Logo with fade-in and bounce animation */}
 
-      <div
-        className="transform mb-8"
-        style={{
-          animation: "flipY 3s linear infinite",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        <div
-          className="rounded-full p-6 shadow-lg w-44 h-44 bg-white flex items-center justify-center"
-          style={{
-            backfaceVisibility: "visible",
-          }}
-        >
-          <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-        </div>
-      </div>
+          <img src={logo} alt="Logo" className="w-52 h-52 object-contain" />
+      
 
       {/* Welcome Text with fade-in animation */}
       <div
@@ -44,10 +30,10 @@ function ThankUGu() {
           textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
         } mb-12 text-center`}
       >
-        <h1 className="text-4xl font-bold text-orange-600 mb-2">
+        <h1 className="text-5xl font-bold text-orange-600 mb-2 font-ghanu">
           ફોર્મ સબમિટ કરવા બદલ આભાર.
         </h1>
-        <p className="text-xl text-black">જય શ્રી સ્વામિનારાયાણ🙏</p>
+        <p className="text-2xl text-black font-ghanu">જય શ્રી સ્વામિનારાયાણ🙏</p>
       </div>
     </div>
   );

@@ -1,15 +1,18 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
 
-export default function AccommodationForm() {
+export default function EnForm() {
   const [formData, setFormData] = useState({
-    locale:"en",
+    locale: "en",
     address: "",
     city: "",
     country: "",
     email: "",
+    pincode: "",
     totalMembers: "1",
     members: [
       {
@@ -31,7 +34,7 @@ export default function AccommodationForm() {
   const [showAddressSuggestions, setShowAddressSuggestions] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // Simulated address suggestions
   const mockAddresses = [
     "123 Main St, Atlanta, USA",
@@ -49,14 +52,15 @@ export default function AccommodationForm() {
 
   // Department options
   const departments = [
-    "Kitchen",
-    "Computer/Accounts",
-    "Senior Citizen",
-    "Medical",
-    "Transportation",
-    "Cleaning",
-    "Registration",
-    "Security",
+    "Assembly hall",
+    "Yag Shala",
+    "Residence Division",
+    "Kitchen Division",
+    "Computer/Accounts Division",
+    "Medical Division",
+    "Transportation Division",
+    "Inquiry Division",
+    "Cleaning Division",
   ];
 
   // Update address suggestions when typing
@@ -174,6 +178,10 @@ export default function AccommodationForm() {
       errors.city = "City is required";
     }
 
+    if (!formData.pincode) {
+      errors.pincode = "Pin Code is required";
+    }
+
     // Validate country
     if (!formData.country) {
       errors.country = "Country is required";
@@ -234,6 +242,15 @@ export default function AccommodationForm() {
     return errors;
   };
 
+  const [countryCode, setCountryCode] = useState("us"); // default fallback
+
+  useEffect(() => {
+    fetch("https://ipapi.co/json")
+      .then((res) => res.json())
+      .then((data) => {
+        setCountryCode(data.country_code.toLowerCase());
+      });
+  }, []);
   // Submit form data
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -320,20 +337,32 @@ export default function AccommodationForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8 ">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-orange-600">
-            Jay Swaminarayan
-          </h1>
-          <h2 className="text-2xl font-semibold text-gray-800 mt-2">
-            Janmangal Mahotsav 2026
+        <div className="text-center">
+          <h2 className="text-blue-800 text-xl md:text-2xl font-semibold">
+            Shree Swaminarayan Sanskardham Gurukul, Dhrangdhra
           </h2>
-          <h3 className="text-xl text-gray-700">
-            NRI Temporary Accommodation Request
-          </h3>
+
+          <h1 className="text-3xl md:text-4xl font-extrabold text-pink-700 mt-3">
+            JANMANGAL MAHOTSAV
+          </h1>
+
+          <p className="text-blue-800 text-xl md:text-xl font-semibold mt-2">
+            Date : 02-01-2026 To 08-01-2026
+          </p>
+
+          <div className="mt-2">
+            <button
+              className="bg-maroon-700 hover:bg-maroon-800 text-white text-lg md:text-xl font-semibold px-8 py-2 rounded-lg shadow"
+              style={{ backgroundColor: "#5c002e" }}
+            >
+              Utara Arrangement Form
+            </button>
+          </div>
         </div>
+    
 
         {/* Error Message */}
         {formErrors.submit && (
@@ -343,7 +372,7 @@ export default function AccommodationForm() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="bg-white shadow-lg rounded-lg p-6 mb-10">
+          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-10">
             {/* Personal Information */}
             <div className="mb-8">
               <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
@@ -411,7 +440,7 @@ export default function AccommodationForm() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     City*
@@ -432,7 +461,26 @@ export default function AccommodationForm() {
                     </p>
                   )}
                 </div>
-
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pin Code*
+                  </label>
+                  <input
+                    type="text"
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border ${
+                      formErrors.city ? "border-red-500" : "border-gray-300"
+                    } rounded-md`}
+                    placeholder="Pin Code"
+                  />
+                  {formErrors.pincode && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.pincode}
+                    </p>
+                  )}
+                </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Country*
@@ -494,8 +542,8 @@ export default function AccommodationForm() {
                   key={index}
                   className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200"
                 >
-                  <div className="flex justify-between items-center mb-3">
-                    <h4 className="font-medium text-gray-700">
+                  <div className="flex justify-between items-center mb-3 ">
+                    <h4 className="font-medium text-white bg-orange-500 px-4 py-2 rounded-xl">
                       Member {index + 1}
                     </h4>
                   </div>
@@ -617,18 +665,22 @@ export default function AccommodationForm() {
                         Mobile No*
                       </label>
                       <div className="relative">
-                        <input
-                          type="tel"
+                        <PhoneInput
+                          country={countryCode}
+                          enableSearch={true}
                           value={member.mobile_no}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              index,
-                              "mobile_no",
-                              e.target.value
-                            )
+                          onChange={(phone) =>
+                            handleMemberChange(index, "mobile_no", phone)
                           }
-                          placeholder="Mobile No"
-                          className={`w-full px-3 py-2 border ${
+                          inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
+                            formErrors.members &&
+                            formErrors.members[index]?.arrival_date
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } rounded-md`}
+                          buttonClass="!bg-white !border-r !border-gray-300 !rounded-l-md"
+                          containerClass="!w-full"
+                          className={`w-20 border ${
                             formErrors.members &&
                             formErrors.members[index]?.mobile_no
                               ? "border-red-500"
@@ -817,10 +869,6 @@ export default function AccommodationForm() {
             </div>
           </div>
         </form>
-        {/* Footer */}
-        <div className="text-center text-gray-500 text-sm pb-8">
-          © 2025 Janmangal Mahotsav Committee. All rights reserved.
-        </div>
       </div>
     </div>
   );

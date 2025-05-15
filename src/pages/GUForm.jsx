@@ -1,15 +1,17 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
-export default function AccommodationForm() {
+import PhoneInput from "react-phone-input-2";
+import "react-phone-input-2/lib/style.css";
+export default function GuForm() {
   const [formData, setFormData] = useState({
     locale: "gu",
     address: "",
     city: "",
     country: "",
     email: "",
+    pincode: "",
     totalMembers: "1",
     members: [
       {
@@ -49,14 +51,15 @@ export default function AccommodationForm() {
 
   // Department options
   const departments = [
-    "રસોડું",
-    "કોમ્પ્યુટર/એકાઉન્ટ્સ",
-    "વરિષ્ઠ નાગરિક",
-    "મેડિકલ",
-    "પરિવહન",
-    "સફાઈ",
-    "નોંધણી",
-    "સુરક્ષા",
+    "સભા મંડપ ",
+    "યજ્ઞ શાળા",
+    "ઉતારા વિભાગ",
+    "રસોડા વિભાગ",
+    "કમ્પ્યુટર/હિસાબ વિભાગ",
+    "મેડિકલ વિભાગ",
+    "પરિવહન વિભાગ",
+    "પૂછપરછ વિભાગ",
+    "સ્વચ્છતા વિભાગ",
   ];
 
   // Update address suggestions when typing
@@ -168,7 +171,9 @@ export default function AccommodationForm() {
     if (!formData.address) {
       errors.address = "સરનામું આવશ્યક છે";
     }
-
+    if (!formData.pincode) {
+      errors.pincode = "પિનકોડ આવશ્યક છે";
+    }
     // Validate city
     if (!formData.city) {
       errors.city = "શહેર આવશ્યક છે";
@@ -318,18 +323,41 @@ export default function AccommodationForm() {
     }
   };
 
+    const [countryCode, setCountryCode] = useState("us"); // default fallback
+    
+      useEffect(() => {
+        fetch("https://ipapi.co/json")
+          .then((res) => res.json())
+          .then((data) => {
+            setCountryCode(data.country_code.toLowerCase());
+          });
+      }, []);
+    
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8 font-ghanu">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-orange-600">
-            જય સ્વામિનારાયણ
-          </h1>
-          <h2 className="text-2xl font-semibold text-gray-800 mt-2">
-            જન્મંગલ મહોત્સવ ૨૦૨૬
+        <div className="text-center font-ghanu">
+          <h2 className="text-blue-800 text-2xl md:text-2xl font-semibold">
+            શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા
           </h2>
-          <h3 className="text-xl text-gray-700">એનઆરઆઈ અસ્થાયી આવાસ વિનંતી</h3>
+
+          <h1 className="text-3xl md:text-6xl font-extrabold text-pink-700 mt-2">
+            જનમંગલ મહોત્સવ
+          </h1>
+
+          <p className="text-blue-800 text-xl md:text-xl font-semibold">
+            તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬
+          </p>
+
+          <div className="mt-2">
+            <button
+              className="bg-maroon-700 hover:bg-maroon-800 text-white text-lg md:text-xl font-semibold px-8 py-2 rounded-lg shadow"
+              style={{ backgroundColor: "#5c002e" }}
+            >
+              ઉતારા વ્યવસ્થા ફોર્મ
+            </button>
+          </div>
         </div>
 
         {/* Error Message */}
@@ -340,15 +368,15 @@ export default function AccommodationForm() {
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="bg-white shadow-lg rounded-lg p-6 mb-10">
+          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-10">
             {/* Personal Information */}
             <div className="mb-8">
-              <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+              <h3 className="text-xl font-medium border-b border-gray-300 pb-2 mb-4">
                 વ્યક્તિગત માહિતી
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xl font-medium text-gray-700 mb-1">
                     ઈમેઈલ
                   </label>
                   <div className="relative">
@@ -371,7 +399,7 @@ export default function AccommodationForm() {
                 </div>
               </div>
               <div className="mb-4 mt-4 relative">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-xl font-medium text-gray-700 mb-1">
                   સરનામું*
                 </label>
                 <div className="relative">
@@ -408,9 +436,9 @@ export default function AccommodationForm() {
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xl font-medium text-gray-700 mb-1">
                     શહેર*
                   </label>
                   <input
@@ -429,9 +457,28 @@ export default function AccommodationForm() {
                     </p>
                   )}
                 </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xl font-medium text-gray-700 mb-1">
+                    પિનકોડ*
+                  </label>
+                  <input
+                    type="number"
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handleChange}
+                    className={`w-full px-3 py-2 border ${
+                      formErrors.pincode ? "border-red-500" : "border-gray-300"
+                    } rounded-md`}
+                    placeholder="પિનકોડ"
+                  />
+                  {formErrors.pincode && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {formErrors.pincode}
+                    </p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-xl font-medium text-gray-700 mb-1">
                     દેશ*
                   </label>
                   <input
@@ -455,13 +502,13 @@ export default function AccommodationForm() {
 
             {/* Stay Information */}
             <div className="mb-8">
-              <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+              <h3 className="text-xl font-medium border-b border-gray-300 pb-2 mb-4">
                 રોકાણની માહિતી
               </h3>
 
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-xl font-medium text-gray-700 mb-1 ">
                     કુલ સભ્યો*
                   </label>
                   <select
@@ -482,7 +529,7 @@ export default function AccommodationForm() {
 
             {/* Member Information - Automatically shows based on total members selected */}
             <div className="mb-8">
-              <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+              <h3 className="text-xl font-medium border-b border-gray-300 pb-2 mb-4">
                 સભ્યની માહિતી
               </h3>
 
@@ -492,14 +539,14 @@ export default function AccommodationForm() {
                   className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200"
                 >
                   <div className="flex justify-between items-center mb-3">
-                    <h4 className="font-medium text-gray-700">
+                    <h4 className="font-medium text-white bg-orange-500 px-4 py-2 rounded-xl text-xl">
                       સભ્ય {index + 1}
                     </h4>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         પ્રથમ નામ*
                       </label>
                       <input
@@ -529,7 +576,7 @@ export default function AccommodationForm() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         પિતાનું નામ*
                       </label>
                       <input
@@ -559,7 +606,7 @@ export default function AccommodationForm() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         અટક*
                       </label>
                       <input
@@ -585,7 +632,7 @@ export default function AccommodationForm() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         ઉંમર*
                       </label>
                       <input
@@ -610,22 +657,26 @@ export default function AccommodationForm() {
                       )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         મોબાઈલ નંબર*
                       </label>
                       <div className="relative">
-                        <input
-                          type="tel"
+                        <PhoneInput
+                          country={countryCode}
+                          enableSearch={true}
                           value={member.mobile_no}
-                          onChange={(e) =>
-                            handleMemberChange(
-                              index,
-                              "mobile_no",
-                              e.target.value
-                            )
+                          onChange={(phone) =>
+                            handleMemberChange(index, "mobile_no", phone)
                           }
-                          placeholder="મોબાઈલ નંબર"
-                          className={`w-full px-3 py-2 border ${
+                          inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
+                            formErrors.members &&
+                            formErrors.members[index]?.arrival_date
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } rounded-md`}
+                          buttonClass="!bg-white !border-r !border-gray-300 !rounded-l-md"
+                          containerClass="!w-full"
+                          className={`w-20 border ${
                             formErrors.members &&
                             formErrors.members[index]?.mobile_no
                               ? "border-red-500"
@@ -642,7 +693,7 @@ export default function AccommodationForm() {
                         )}
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         આગમન તારીખ*
                       </label>
                       <div className="relative">
@@ -666,7 +717,7 @@ export default function AccommodationForm() {
                           } rounded-md`}
                         />
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-x text-gray-500 mt-1">
                         ડિસેમ્બર 01, 2025 - જાન્યુઆરી 20, 2026 વચ્ચે
                       </p>
                       {formErrors.members &&
@@ -678,7 +729,7 @@ export default function AccommodationForm() {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <label className="block text-xl font-medium text-gray-700 mb-1">
                         પ્રસ્થાન તારીખ*
                       </label>
                       <div className="relative">
@@ -702,7 +753,7 @@ export default function AccommodationForm() {
                           } rounded-md`}
                         />
                       </div>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-x text-gray-500 mt-1">
                         ડિસેમ્બર 01, 2025 - જાન્યુઆરી 20, 2026 વચ્ચે
                       </p>
                       {formErrors.members &&
@@ -716,7 +767,7 @@ export default function AccommodationForm() {
                   {/* Seva Section - only show if age > 15 */}
                   {member.age && parseInt(member.age) > 15 && (
                     <div className="mb-4">
-                      <h3 className="text-lg font-medium border-b border-gray-300 pb-2 mb-4">
+                      <h3 className="text-xl font-medium border-b border-gray-300 pb-2 mb-4">
                         શું તમે સેવામાં જોડાવા માંગો છો?
                       </h3>
 
@@ -728,7 +779,7 @@ export default function AccommodationForm() {
                             checked={member.isSeva === true}
                             onChange={() => setMemberSevaStatus(index, true)}
                           />
-                          <span className="ml-2">હા</span>
+                          <span className="ml-2 text-xl">હા</span>
                         </label>
 
                         <label className="flex items-center">
@@ -738,7 +789,7 @@ export default function AccommodationForm() {
                             checked={member.isSeva === false}
                             onChange={() => setMemberSevaStatus(index, false)}
                           />
-                          <span className="ml-2">ના</span>
+                          <span className="ml-2 text-xl">ના</span>
                         </label>
                       </div>
 
@@ -746,7 +797,7 @@ export default function AccommodationForm() {
                         <div className="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
                           <div className="grid sm:grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-xl font-medium text-gray-700">
                                 તમારી કુશળતા/ અન્ય નોંધ
                               </label>
                               <input
@@ -764,7 +815,7 @@ export default function AccommodationForm() {
                             </div>
 
                             <div>
-                              <label className="block text-sm font-medium text-gray-700">
+                              <label className="block text-xl font-medium text-gray-700">
                                 કયા વિભાગમાં સેવા આપવા ઇચ્છો છો?
                               </label>
                               <select
@@ -800,24 +851,21 @@ export default function AccommodationForm() {
               <button
                 type="button"
                 onClick={() => window.location.reload()}
-                className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                className="px-6 py-2 border border-gray-300 rounded-md shadow-sm text-xl font-medium text-gray-700 bg-white hover:bg-gray-50"
               >
                 રદ કરો
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                className="px-6 py-2 border border-transparent rounded-md shadow-sm text-xl font-medium text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 {isSubmitting ? "સબમિટ થઈ રહ્યું છે..." : "સબમિટ કરો"}
               </button>
             </div>
           </div>
         </form>
-        {/* Form Actions */}
-        <div className="text-center text-gray-500 text-sm pb-8">
-          © 2025 જન્મમંગલ મહોત્સવ કમિટી. બધા અધિકારો સુરક્ષિત.
-        </div>
+       
       </div>
     </div>
   );

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
-import logo from "../../public/logo.png";
+import logo from "../../public/janmangal logo.png";
 
 function ThankUEn() {
-  
   const [textVisible, setTextVisible] = useState(false);
-  
 
   // Animation effects on component mount
   useEffect(() => {
@@ -19,28 +17,13 @@ function ThankUEn() {
     }, 1500);
   }, []);
 
- 
-
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 p-4">
       {/* Logo with fade-in and bounce animation */}
 
-      <div
-        className="transform mb-8"
-        style={{
-          animation: "flipY 3s linear infinite",
-          transformStyle: "preserve-3d",
-        }}
-      >
-        <div
-          className="rounded-full p-6 shadow-lg w-44 h-44 bg-white flex items-center justify-center"
-          style={{
-            backfaceVisibility: "visible",
-          }}
-        >
-          <img src={logo} alt="Logo" className="w-full h-full object-contain" />
-        </div>
-      </div>
+      
+          <img src={logo} alt="Logo" className="w-52 h-52 object-contain" />
+       
 
       {/* Welcome Text with fade-in animation */}
       <div

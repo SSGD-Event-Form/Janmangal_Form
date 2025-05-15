@@ -1,10 +1,15 @@
+@font-face {
+  font-family: 'Ghanu';
+  src: url('/fonts/Ghanu.ttc') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 
-    @keyframes flipY {
-      0% { transform: rotateY(0deg); }
-      100% { transform: rotateY(360deg); }
-    }
-    
-    .perspective-800 {
-      perspective: 800px;
-    }
-  
+@keyframes flipY {
+  0% { transform: rotateY(0deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.perspective-800 {
+  perspective: 800px;
+}
