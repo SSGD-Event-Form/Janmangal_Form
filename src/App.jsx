@@ -1,8 +1,8 @@
 import { Route, Router, Routes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/HomePage";
-import GuForm from "./pages/GuForm";
-import EnForm from "./pages/EnForm";
+import GuForm from "./pages/GUForm";
+import EnForm from "./pages/ENForm";
 import ThankUEn from "./pages/ThankUEn";
 import ThankUGu from "./pages/ThankUGu";
 
