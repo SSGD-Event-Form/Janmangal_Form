@@ -6,6 +6,10 @@ export default {
       fontFamily: {
         ghanu: ["Ghanu", "sans-serif"],
       },
+      screens: {
+        xs:"360px"
+      }
+
     },
   },
   plugins: [],

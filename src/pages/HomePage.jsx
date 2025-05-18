@@ -36,34 +36,40 @@ function HomePage() {
     // If no language is selected, do nothing
   };
 
-
-  
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 ">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 px-3">
       {/* Logo with fade-in and bounce animation */}
 
-     
-            <img
-              src={logo}
-              alt="Logo Front"
-              className="object-contain w-52 h-52"
-            />
-          
-
-         
+      <div className="xs:w-96 sm:w-96 md:w-[500px] xs:h-56 sm:h-56 md:h-72">
+        <img
+          src={logo}
+          alt="Logo Front"
+          className={`xs:w-96 xs:h-56 sm:w-96 md:w-[500px] sm:h-56 md:h-72 object-contain transition-all duration-1000 ease-out ${
+            textVisible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 translate-y-10"
+          }`}
+        />
+      </div>
 
       {/* Welcome Text with fade-in animation */}
       <div
-        className={`transition-all duration-1000 ${
+        className={`transition-all duration-1000 ease-out delay-300 ${
           textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-        } mb-12 text-center`}
+        } text-center mt-0`}
       >
-        <h1 className="text-4xl font-bold text-orange-600 mb-2">Welcome</h1>
-        <p className="text-xl text-black">Jay Shree Swaminarayan🙏</p>
+        <h1 className="text-4xl font-bold text-orange-600 mb-2 flex justify-center mt-8">Welcome</h1>
+        <p className="text-xl text-black font-medium">
+          🙏 Jay Shree Swaminarayan 🙏
+        </p>
       </div>
 
       {/* Language Selection */}
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+      <div
+        className={`bg-white rounded-lg shadow-lg p-6 w-full max-w-md mt-8 ${
+          textVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+        } `}
+      >
         <h2 className="text-lg font-medium text-gray-700 mb-4">
           Select Language
         </h2>
