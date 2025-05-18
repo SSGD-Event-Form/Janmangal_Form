@@ -279,7 +279,7 @@ export default function GuForm() {
 
       try {
         const finalFormData = prepareFinalFormData();
-        console.log(finalFormData);
+       
 
         const response = await axios.post(
           "https://api.janmangal.ssgd.org/api/accommodations",

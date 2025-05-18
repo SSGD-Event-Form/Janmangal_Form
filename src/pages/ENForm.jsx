@@ -261,7 +261,7 @@ export default function EnForm() {
   // Prepare final form data for submission
   const prepareFinalFormData = () => {
     // Combine personal info with formData
-    console.log(formData);
+ 
     // return false;
     return formData;
   };
