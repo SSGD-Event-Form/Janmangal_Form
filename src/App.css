@@ -13,4 +13,21 @@
 .perspective-800 {
   perspective: 800px;
 }
-
+/* .react-datepicker-wrapper
+{
+  width: 300px;
+}
+@media only screen and (max-width: 768px)
+{
+.react-datepicker-wrapper
+{
+  width: 530px;
+}
+}
+@media only screen and (max-width: 1020px)
+{
+.react-datepicker-wrapper
+{
+  width: 290px;
+}
+} */

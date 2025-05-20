@@ -6,6 +6,8 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { MdCancel } from "react-icons/md";
 import { BsArrowRight } from "react-icons/bs";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function EnForm() {
   const [formData, setFormData] = useState({
@@ -66,6 +68,12 @@ export default function EnForm() {
     Cleaning: "Cleaning ",
   };
 
+  const formatDateToLocalYMD = (date) => {
+  const offset = date.getTimezoneOffset();
+  const localDate = new Date(date.getTime() - offset * 60 * 1000);
+  return localDate.toISOString().split('T')[0];
+};
+
   // Handle form input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -99,7 +107,9 @@ export default function EnForm() {
 
       setFormData({
         ...formData,
-        [name]: value,
+        [name]: value instanceof Date
+        ? formatDateToLocalYMD(value)
+        : value,
         members: updatedMembers,
       });
     } else {
@@ -675,7 +685,28 @@ export default function EnForm() {
                     Arrival Date*
                   </label>
                   <div className="relative">
-                    <input
+                    <DatePicker
+                      selected={
+                        formData.arrival_date
+                          ? new Date(formData.arrival_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleChange({
+                          target: { name: "arrival_date", value: date },
+                        })
+                      }
+                      placeholderText="dd-mm-yyyy"
+                      minDate={new Date(minArrivalDate)}
+                      maxDate={new Date(maxArrivalDate)}
+                      dateFormat="dd-MM-yyyy"
+                      className={`w-full px-3 py-2 border ${
+                        formErrors.arrival_date
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-md`}
+                    />
+                    {/* <input
                       type="date"
                       name="arrival_date"
                       value={formData.arrival_date}
@@ -687,7 +718,7 @@ export default function EnForm() {
                           ? "border-red-500"
                           : "border-gray-300"
                       } rounded-md`}
-                    />
+                    /> */}
                   </div>
                   <p className="text-x text-gray-500 mt-1">
                     Between December 01, 2025 - January 20, 2026
@@ -704,7 +735,28 @@ export default function EnForm() {
                     Departure Date*
                   </label>
                   <div className="relative">
-                    <input
+                    <DatePicker
+                      selected={
+                        formData.departure_date
+                          ? new Date(formData.departure_date)
+                          : null
+                      }
+                      onChange={(date) =>
+                        handleChange({
+                          target: { name: "departure_date", value: date },
+                        })
+                      }
+                      placeholderText="dd-mm-yyyy"
+                      minDate={new Date(formData.arrival_date || minDepartureDate)}
+                      maxDate={new Date(maxDepartureDate)}
+                      dateFormat="dd-MM-yyyy"
+                      className={`w-full px-3 py-2 border ${
+                        formErrors.departure_date
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-md`}
+                    />
+                    {/* <input
                       type="date"
                       name="departure_date"
                       value={formData.departure_date}
@@ -716,7 +768,7 @@ export default function EnForm() {
                           ? "border-red-500"
                           : "border-gray-300"
                       } rounded-md`}
-                    />
+                    /> */}
                   </div>
                   <p className="text-x text-gray-500 mt-1">
                     Between December 01, 2025 - January 20, 2026
