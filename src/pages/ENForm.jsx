@@ -69,10 +69,10 @@ export default function EnForm() {
   };
 
   const formatDateToLocalYMD = (date) => {
-  const offset = date.getTimezoneOffset();
-  const localDate = new Date(date.getTime() - offset * 60 * 1000);
-  return localDate.toISOString().split('T')[0];
-};
+    const offset = date.getTimezoneOffset();
+    const localDate = new Date(date.getTime() - offset * 60 * 1000);
+    return localDate.toISOString().split("T")[0];
+  };
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -94,8 +94,8 @@ export default function EnForm() {
             age: "",
             isSeva: false,
             mobile_no: "",
-            arrival_date: "",
-            departure_date: "",
+            arrival_date: formData.arrival_date,
+            departure_date: formData.departure_date,
             skill: "",
             department: "",
           });
@@ -107,13 +107,14 @@ export default function EnForm() {
 
       setFormData({
         ...formData,
-        [name]: value instanceof Date
-        ? formatDateToLocalYMD(value)
-        : value,
+        [name]: value instanceof Date ? formatDateToLocalYMD(value) : value,
         members: updatedMembers,
       });
     } else {
-      setFormData({ ...formData, [name]: value });
+      setFormData({
+        ...formData,
+        [name]: value instanceof Date ? formatDateToLocalYMD(value) : value,
+      });
     }
   };
 
@@ -123,8 +124,12 @@ export default function EnForm() {
 
   // Handle member data change
   const handleMemberChange = (index, field, value) => {
+    console.log(value instanceof Date ? formatDateToLocalYMD(value) : value);
     const updatedMembers = [...formData.members];
-    updatedMembers[index] = { ...updatedMembers[index], [field]: value };
+    updatedMembers[index] = {
+      ...updatedMembers[index],
+      [field]: value instanceof Date ? formatDateToLocalYMD(value) : value,
+    };
 
     // If age is changed and becomes <= 15, set isSeva to false
     if (field === "age") {
@@ -271,7 +276,7 @@ export default function EnForm() {
   // Prepare final form data for submission
   const prepareFinalFormData = () => {
     // Combine personal info with formData
- 
+
     // return false;
     return formData;
   };
@@ -680,11 +685,13 @@ export default function EnForm() {
                     </p>
                   )}
                 </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                 <div>
                   <label className="block text-md font-medium text-gray-700 mb-1">
                     Arrival Date*
                   </label>
-                  <div className="relative">
+                  <div className="relative mx-w-5xl">
                     <DatePicker
                       selected={
                         formData.arrival_date
@@ -747,7 +754,9 @@ export default function EnForm() {
                         })
                       }
                       placeholderText="dd-mm-yyyy"
-                      minDate={new Date(formData.arrival_date || minDepartureDate)}
+                      minDate={
+                        new Date(formData.arrival_date || minDepartureDate)
+                      }
                       maxDate={new Date(maxDepartureDate)}
                       dateFormat="dd-MM-yyyy"
                       className={`w-full px-3 py-2 border ${
@@ -1052,7 +1061,27 @@ export default function EnForm() {
                         Arrival Date*
                       </label>
                       <div className="relative">
-                        <input
+                        <DatePicker
+                          selected={
+                            member.arrival_date
+                              ? new Date(member.arrival_date)
+                              : null
+                          }
+                          onChange={(date) =>
+                            handleMemberChange(index, "arrival_date", date)
+                          }
+                          minDate={new Date(minArrivalDate)}
+                          maxDate={new Date(maxArrivalDate)}
+                          dateFormat="dd-MM-yyyy"
+                          placeholderText="dd-mm-yyyy"
+                          className={`w-full px-3 py-2 border ${
+                            formErrors.members &&
+                            formErrors.members[index]?.arrival_date
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        />
+                        {/* <input
                           type="date"
                           value={member.arrival_date}
                           onChange={(e) =>
@@ -1070,7 +1099,7 @@ export default function EnForm() {
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
-                        />
+                        /> */}
                       </div>
                       <p className="text-x text-gray-500 mt-1">
                         Between December 01, 2025 - January 20, 2026
@@ -1088,7 +1117,31 @@ export default function EnForm() {
                         Departure Date*
                       </label>
                       <div className="relative">
-                        <input
+                        <DatePicker
+                          selected={
+                            member.departure_date
+                              ? new Date(member.departure_date)
+                              : null
+                          }
+                          onChange={(date) =>
+                            handleMemberChange(index, "departure_date", date)
+                          }
+                          minDate={
+                            member.arrival_date
+                              ? new Date(member.arrival_date)
+                              : new Date(minDepartureDate)
+                          }
+                          maxDate={new Date(maxDepartureDate)}
+                          dateFormat="dd-MM-yyyy"
+                          placeholderText="dd-mm-yyyy"
+                          className={`w-full px-3 py-2 border ${
+                            formErrors.members &&
+                            formErrors.members[index]?.departure_date
+                              ? "border-red-500"
+                              : "border-gray-300"
+                          } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                        />
+                        {/* <input
                           type="date"
                           value={member.departure_date}
                           onChange={(e) =>
@@ -1106,7 +1159,7 @@ export default function EnForm() {
                               ? "border-red-500"
                               : "border-gray-300"
                           } rounded-md`}
-                        />
+                        /> */}
                       </div>
                       <p className="text-x text-gray-500 mt-1">
                         Between December 01, 2025 - January 20, 2026
