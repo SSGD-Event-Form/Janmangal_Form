@@ -398,11 +398,11 @@ export default function GuForm() {
   const getImage = () => {
     switch (device) {
       case "desktop":
-        return "/public/desktop_image.jpg";
+        return "/desktop_image.jpg";
       case "tablet":
-        return "/public/ipad-0001.png";
+        return "/ipad-0001.png";
       default:
-        return "/public/mobile-0001.png";
+        return "/mobile-0001.png";
     }
   };
 
