@@ -341,7 +341,7 @@ export default function GuForm() {
           return;
         }
 
-        navigate("/gu-thanku");
+        navigate("/");
         toast.success("ફોર્મ સફળતાપૂર્વક સબમિટ થયું!");
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -432,7 +432,7 @@ export default function GuForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-5 px-4 sm:px-6 lg:px-8 font-ghanu">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-4 px-4 sm:px-6 lg:px-8 font-ghanu">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center flex justify-center">
@@ -444,7 +444,7 @@ export default function GuForm() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-5">
+          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-4">
             {/* Personal Information Section */}
             <div className="mb-4 p-6 bg-gray-50 rounded-lg border border-gray-200">
               <h3 className="text-xl font-medium border-b border-gray-300 pb-2 mb-4">
@@ -804,8 +804,8 @@ export default function GuForm() {
             </div>
 
             <p className="text-red-700 font-bold text-2xl flex justify-center mb-4">
-              નોંધ : જો પરિવારના અન્ય સભ્યો ઉત્સવમાં હાજરી આપવાનાં હોય, તો કૃપા
-              કરીને નીચેની માહિતી ભરો.
+              નોંધ : જો પરિવારના અન્ય સભ્યો ઉત્સવમાં પધારવાના હોય, તો
+              નીચેની માહિતી ભરવી..
             </p>
             {/* Stay Information */}
             <div className="mb-8 p-3 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-xl shadow-md grid sm:grid-cols-1 md:grid-cols-2">

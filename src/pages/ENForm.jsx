@@ -339,7 +339,7 @@ export default function EnForm() {
           return;
         }
 
-        navigate("/en-thanku");
+        navigate("/");
         toast.success("Form submitted successfully!");
       } catch (error) {
         console.error("Error submitting form:", error);
@@ -427,7 +427,7 @@ export default function EnForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-indigo-100 py-4 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center flex justify-center">
@@ -439,7 +439,7 @@ export default function EnForm() {
         </div>
 
         <form onSubmit={handleSubmit}>
-          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-10">
+          <div className="bg-white shadow-lg rounded-lg p-6 mb-10 mt-4">
             {/* Personal Information Section */}
             <div className="mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
               <h3 className="text-md font-medium border-b border-gray-300 pb-2 mb-4">
