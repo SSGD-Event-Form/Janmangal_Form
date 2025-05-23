@@ -168,11 +168,9 @@ export default function GuForm() {
     if (!formData.age) {
       errors.personal_age = "ઉંમર આવશ્યક છે";
     } else if (
-      isNaN(formData.age) ||
-      parseInt(formData.age) < 0 ||
-      parseInt(formData.age) > 100
+      formData.age && (formData.age < 2 || formData.age > 100)
     ) {
-      errors.personal_age = "ઉંમર 0-100 વચ્ચે હોવી જોઈએ";
+      errors.personal_age = "ઉંમર 2-100 વચ્ચે હોવી જોઈએ";
     }
     if (!formData.mobile_no) {
       errors.personal_mobile_no = "મોબાઈલ નંબર આવશ્યક છે";
@@ -235,11 +233,9 @@ export default function GuForm() {
       if (!member.age) {
         memberError.age = "ઉંમર આવશ્યક છે";
       } else if (
-        isNaN(member.age) ||
-        parseInt(member.age) < 2 ||
-        parseInt(member.age) > 100
+        member.age && (member.age < 2 || member.age > 100)
       ) {
-        memberError.age = "ઉંમર 0-100 વચ્ચે હોવી જોઈએ";
+        memberError.age = "ઉંમર 2-100 વચ્ચે હોવી જોઈએ";
       }
 
       if (!member.mobile_no) {

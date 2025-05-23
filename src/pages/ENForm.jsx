@@ -170,9 +170,7 @@ export default function EnForm() {
     if (!formData.age) {
       errors.personal_age = "Age is required";
     } else if (
-      isNaN(formData.age) ||
-      parseInt(formData.age) < 2 ||
-      parseInt(formData.age) > 100
+      formData.age && (formData.age < 2 || formData.age > 100)
     ) {
       errors.personal_age = "Age must be between 2 and 100";
     }
@@ -236,11 +234,9 @@ export default function EnForm() {
       if (!member.age) {
         memberError.age = "Age is required";
       } else if (
-        isNaN(member.age) ||
-        parseInt(member.age) < 2 ||
-        parseInt(member.age) > 100
+        member.age && (member.age < 2 || member.age > 100)
       ) {
-        memberError.age = "Age must be between 0-100";
+        memberError.age = "Age must be between 2-100";
       }
 
       if (!member.mobile_no) {
