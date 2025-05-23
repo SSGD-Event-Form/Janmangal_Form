@@ -7,7 +7,7 @@ export default {
         ghanu: ["Ghanu", "sans-serif"],
       },
       screens: {
-        xs:"360px"
+        xs:"300px"
       }
 
     },

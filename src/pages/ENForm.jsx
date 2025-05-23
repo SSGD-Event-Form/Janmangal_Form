@@ -56,8 +56,8 @@ export default function EnForm() {
 
   // Department options
   const departments = {
-    AssemblyHall: "AssemblyHall",
-    YagShala: "YagnShala",
+    AssemblyHall: "Assembly Hall",
+    Yagnashala: "Yagnashala",
     Residence: "Residence",
     Kitchen: "Kitchen",
     "Computer / Office ": "Computer / Office ",
@@ -171,10 +171,10 @@ export default function EnForm() {
       errors.personal_age = "Age is required";
     } else if (
       isNaN(formData.age) ||
-      parseInt(formData.age) < 0 ||
+      parseInt(formData.age) < 2 ||
       parseInt(formData.age) > 100
     ) {
-      errors.personal_age = "Age must be between 0-100";
+      errors.personal_age = "Age must be between 2 and 100";
     }
     if (!formData.mobile_no) {
       errors.personal_mobile_no = "Mobile number is required";
@@ -237,7 +237,7 @@ export default function EnForm() {
         memberError.age = "Age is required";
       } else if (
         isNaN(member.age) ||
-        parseInt(member.age) < 0 ||
+        parseInt(member.age) < 2 ||
         parseInt(member.age) > 100
       ) {
         memberError.age = "Age must be between 0-100";
@@ -377,7 +377,6 @@ export default function EnForm() {
         setCountryCode(data.country_code.toLowerCase());
         setFormData((prevData) => ({
           ...prevData,
-          city: data.city,
           country: data.country_name,
         }));
       })
@@ -865,23 +864,23 @@ export default function EnForm() {
 
             {/* Stay Information */}
             <div className="mb-8 p-3 mt-4 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-xl shadow-md grid sm:grid-cols-1 md:grid-cols-2">
-              <h3 className="text-md font-semibold text-gray-800 flex items-center ps-4">
+              <h3 className="text-md font-semibold text-gray-800 flex justify-center items-center">
                 Family Member Information
               </h3>
 
-              <div className="flex items-center gap-4">
-                <label className="text-md font-medium text-gray-800">
+              <div className="xs:block sm:block md:flex items-center justify-center xs:mx-auto md:mx-0 xs:gap-5 sm:gap-4 sm:mt-2 md:mt-0 xs:mt-3 md:me-11 xl:me-10">
+                <label className="xs:text-sm sm:text-sm md:text-md font-semibold text-gray-800 flex justify-center items-center">
                   Total Members*
                 </label>
                 <select
                   name="totalMembers"
                   value={formData.totalMembers}
                   onChange={handleChange}
-                  className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+                  className="xs:px-2 xs:mt-3 md:mt-0 sm:px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 flex justify-center items-center"
                 >
                   {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <option key={num} value={num}>
-                      {num == 0 ? "select member" : num}
+                      {num == 0 ? "Select Member" : num}
                     </option>
                   ))}
                 </select>

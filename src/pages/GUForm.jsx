@@ -236,7 +236,7 @@ export default function GuForm() {
         memberError.age = "ઉંમર આવશ્યક છે";
       } else if (
         isNaN(member.age) ||
-        parseInt(member.age) < 0 ||
+        parseInt(member.age) < 2 ||
         parseInt(member.age) > 100
       ) {
         memberError.age = "ઉંમર 0-100 વચ્ચે હોવી જોઈએ";
@@ -378,12 +378,11 @@ export default function GuForm() {
         setCountryCode(data.country_code.toLowerCase());
         setFormData((prevData) => ({
           ...prevData,
-          city: data.city,
           country: data.country_name,
         }));
       })
-      .catch(() => {
-        // Keep default country code if fetch fails
+      .catch((error) => {
+        console.log(error);
       });
   }, []);
 
@@ -860,15 +859,15 @@ export default function GuForm() {
 
             <p className="text-red-700 font-bold text-2xl flex justify-center mb-4">
               નોંધ : જો પરિવારના અન્ય સભ્યો ઉત્સવમાં પધારવાના હોય, તો નીચેની
-              માહિતી ભરવી..
+              માહિતી ભરવી.
             </p>
             {/* Stay Information */}
             <div className="mb-8 p-3 bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 rounded-xl shadow-md grid sm:grid-cols-1 md:grid-cols-2">
-              <h3 className="text-xl font-semibold text-gray-800 flex items-center">
+              <h3 className="text-xl font-semibold text-gray-800 flex items-center justify-center">
                 પરિવારના અન્ય સભ્યની માહિતી
               </h3>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 justify-center xs:mt-2 sm:mt-2 md:mt-0 md:me-11 xl:me-10">
                 <label className="text-xl font-medium text-gray-800">
                   કુલ સભ્યો
                 </label>
