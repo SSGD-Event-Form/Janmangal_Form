@@ -558,8 +558,8 @@ export default function GuForm() {
                       country={countryCode}
                       enableSearch={true}
                       value={formData.mobile_no}
-                      onChange={(phone) =>
-                        handleInputChange("mobile_no", phone)
+                      onChange={(phone, country, e, formattedValue) =>
+                        handleInputChange("mobile_no", formattedValue)
                       }
                       inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
                         formErrors.personal_mobile_no
@@ -1023,8 +1023,8 @@ export default function GuForm() {
                           country={countryCode}
                           enableSearch={true}
                           value={member.mobile_no}
-                          onChange={(phone) =>
-                            handleMemberChange(index, "mobile_no", phone)
+                          onChange={(phone, country, e, formattedValue) =>
+                            handleMemberChange(index, "mobile_no", formattedValue)
                           }
                           inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
                             formErrors.members &&
