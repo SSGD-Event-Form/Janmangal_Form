@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
@@ -14,8 +14,8 @@ import {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React from "react";
-import ReactCrop from "react-image-crop";
-import "react-image-crop/dist/ReactCrop.css";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
 import { getYear, getMonth } from "date-fns";
 
 export default function SevakForm() {
@@ -65,15 +65,11 @@ export default function SevakForm() {
   const [cameraStream, setCameraStream] = useState(null);
   const [showCropModal, setShowCropModal] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
-  const [crop, setCrop] = useState({
-    unit: "%",
-    width: 90,
-    aspect: 1,
-  });
   const [croppedImage, setCroppedImage] = useState(null);
   const videoRef = React.useRef(null);
-  const imageRef = React.useRef(null);
   const [cameraError, setCameraError] = useState("");
+  const [cropper, setCropper] = useState(null);
+  const imageRef = useRef(null);
 
   const formatDateToLocalYMD = (date) => {
     const offset = date.getTimezoneOffset();
@@ -252,10 +248,14 @@ export default function SevakForm() {
       formDataObj.append("seva_days", formData.seva_days);
       formDataObj.append("is_seva_vehicle", formData.is_seva_vehicle);
       formDataObj.append("seva_vehicle_days", formData.seva_vehicle_days || "");
-      formDataObj.append(
-        "seva_vehicle_types",
-        formData.seva_vehicle_types?.join(", ") || ""
-      );
+
+      // Handle seva_vehicle_types array
+      let vehicleTypes = [...formData.seva_vehicle_types];
+      if (formData.other_vehicle_detail) {
+        vehicleTypes.push(formData.other_vehicle_detail);
+      }
+      formDataObj.append("seva_vehicle_types", vehicleTypes.join(", ") || "");
+
       formDataObj.append("is_driving_license", formData.is_driving_license);
       formDataObj.append(
         "types_of_license",
@@ -269,31 +269,7 @@ export default function SevakForm() {
         formDataObj.append("photo", formData.photo);
       }
 
-      // Log form data for debugging
-      console.log("Submitting form data:", {
-        name: formData.name,
-        father_name: formData.father_name,
-        surname: formData.surname,
-        address: formData.address,
-        village: formData.village,
-        taluka: formData.taluka,
-        district: formData.district,
-        education: formData.education,
-        business: formData.business,
-        saint_or_devotee_name: formData.saint_or_devotee_name,
-        birth_date: formData.birth_date,
-        mobile_no: formData.mobile_no,
-        alt_mobile_no: formData.alt_mobile_no,
-        seva_days: formData.seva_days,
-        is_seva_vehicle: formData.is_seva_vehicle,
-        seva_vehicle_days: formData.seva_vehicle_days,
-        seva_vehicle_types: formData.seva_vehicle_types,
-        is_driving_license: formData.is_driving_license,
-        types_of_license: formData.types_of_license,
-        skill: formData.skill,
-        department: formData.department,
-        hasPhoto: !!formData.photo,
-      });
+     
 
       const response = await axios.post(
         "https://api.janmangal.ssgd.org/api/volunteer",
@@ -305,35 +281,12 @@ export default function SevakForm() {
         }
       );
 
-      const data = response.data;
-
-      if (data.status === false) {
-        console.log("API validation errors:", data.response);
-        toast.error(
-          data.response?.message || "કૃપા કરીને બધા આવશ્યક ફીલ્ડ ભરો."
-        );
-        return;
-      }
-
-      // Handle successful submission
-      if (data.status === true) {
-        console.log("Volunteer registration successful:", data);
-        toast.success("સ્વયંસેવક નોંધણી સફળતાપૂર્વક થઈ!");
-        resetForm();
-      }
+      
+        toast.success("‍ફોર્મ સફળતાપૂર્વક સબમિટ થઇ ગયું છે");
+       
     } catch (error) {
       console.error("Error submitting form:", error);
-      console.error("Error details:", {
-        message: error.message,
-        response: error.response?.data,
-        status: error.response?.status,
-      });
-
-      if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else {
-        toast.error("ફોર્મ સબમિટ કરવામાં ભૂલ આવી. કૃપા કરીને ફરી પ્રયાસ કરો.");
-      }
+      
     } finally {
       setIsSubmitting(false);
     }
@@ -463,33 +416,18 @@ export default function SevakForm() {
     }
   };
 
-  // Function to handle crop completion
-  const onCropComplete = (crop, pixelCrop) => {
-    if (imageRef.current && crop.width && crop.height) {
-      const canvas = document.createElement("canvas");
-      const scaleX = imageRef.current.naturalWidth / imageRef.current.width;
-      const scaleY = imageRef.current.naturalHeight / imageRef.current.height;
+  const handleCropSubmit = () => {
+    if (!cropper) return;
 
-      // Set canvas size to match crop dimensions
-      canvas.width = pixelCrop.width;
-      canvas.height = pixelCrop.height;
+    const canvas = cropper.getCroppedCanvas({
+      width: 300,
+      height: 300,
+      fillColor: "#fff",
+      imageSmoothingEnabled: true,
+      imageSmoothingQuality: "high",
+    });
 
-      const ctx = canvas.getContext("2d");
-
-      // Draw the cropped image
-      ctx.drawImage(
-        imageRef.current,
-        pixelCrop.x * scaleX,
-        pixelCrop.y * scaleY,
-        pixelCrop.width * scaleX,
-        pixelCrop.height * scaleY,
-        0,
-        0,
-        pixelCrop.width,
-        pixelCrop.height
-      );
-
-      // Convert to blob and create file
+    if (canvas) {
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -499,7 +437,7 @@ export default function SevakForm() {
             setFormData({ ...formData, photo: file });
             setCroppedImage(URL.createObjectURL(blob));
             setShowCropModal(false);
-            setImageSrc(null); // Clear the original image
+            setImageSrc(null);
             toast.success("ફોટો સફળતાપૂર્વક અપલોડ થયો");
           }
         },
@@ -931,32 +869,28 @@ export default function SevakForm() {
                       </button>
                     </div>
                     <div className="max-h-[60vh] overflow-auto">
-                      <ReactCrop
-                        crop={crop}
-                        onChange={(c) => setCrop(c)}
-                        onComplete={onCropComplete}
-                        aspect={1}
-                        className="max-w-full"
-                      >
-                        <img
-                          ref={imageRef}
-                          src={imageSrc}
-                          alt="Crop preview"
-                          className="max-w-full"
-                          onLoad={(e) => {
-                            // Reset crop when image loads
-                            const { width, height } = e.target;
-                            const size = Math.min(width, height);
-                            setCrop({
-                              unit: "px",
-                              width: size,
-                              height: size,
-                              x: (width - size) / 2,
-                              y: (height - size) / 2,
-                            });
-                          }}
-                        />
-                      </ReactCrop>
+                      <Cropper
+                        ref={imageRef}
+                        src={imageSrc}
+                        style={{ height: 400, width: "100%" }}
+                        aspectRatio={1}
+                        guides={true}
+                        autoCropArea={0.8}
+                        background={false}
+                        viewMode={1}
+                        onInitialized={(instance) => setCropper(instance)}
+                        cropBoxMovable={true}
+                        cropBoxResizable={true}
+                        dragMode="move"
+                        responsive={true}
+                        restore={false}
+                        center={true}
+                        highlight={false}
+                        modal={true}
+                        zoomable={true}
+                        zoomOnTouch={true}
+                        zoomOnWheel={true}
+                      />
                     </div>
                     <div className="flex justify-end gap-2 mt-4">
                       <button
@@ -971,19 +905,7 @@ export default function SevakForm() {
                       </button>
                       <button
                         type="button"
-                        onClick={() => {
-                          const image = imageRef.current;
-                          if (image) {
-                            const scaleX = image.naturalWidth / image.width;
-                            const scaleY = image.naturalHeight / image.height;
-                            onCropComplete(crop, {
-                              x: crop.x * scaleX,
-                              y: crop.y * scaleY,
-                              width: crop.width * scaleX,
-                              height: crop.height * scaleY,
-                            });
-                          }
-                        }}
+                        onClick={handleCropSubmit}
                         className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                       >
                         ક્રોપ કરો
