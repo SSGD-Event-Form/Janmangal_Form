@@ -167,9 +167,7 @@ export default function GuForm() {
     }
     if (!formData.age) {
       errors.personal_age = "ઉંમર આવશ્યક છે";
-    } else if (
-      formData.age && (formData.age < 2 || formData.age > 100)
-    ) {
+    } else if (formData.age && (formData.age < 2 || formData.age > 100)) {
       errors.personal_age = "ઉંમર 2-100 વચ્ચે હોવી જોઈએ";
     }
     if (!formData.mobile_no) {
@@ -232,9 +230,7 @@ export default function GuForm() {
 
       if (!member.age) {
         memberError.age = "ઉંમર આવશ્યક છે";
-      } else if (
-        member.age && (member.age < 2 || member.age > 100)
-      ) {
+      } else if (member.age && (member.age < 2 || member.age > 100)) {
         memberError.age = "ઉંમર 2-100 વચ્ચે હોવી જોઈએ";
       }
 
@@ -1024,7 +1020,11 @@ export default function GuForm() {
                           enableSearch={true}
                           value={member.mobile_no}
                           onChange={(phone, country, e, formattedValue) =>
-                            handleMemberChange(index, "mobile_no", formattedValue)
+                            handleMemberChange(
+                              index,
+                              "mobile_no",
+                              formattedValue
+                            )
                           }
                           inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
                             formErrors.members &&

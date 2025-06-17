@@ -169,9 +169,7 @@ export default function EnForm() {
     }
     if (!formData.age) {
       errors.personal_age = "Age is required";
-    } else if (
-      formData.age && (formData.age < 2 || formData.age > 100)
-    ) {
+    } else if (formData.age && (formData.age < 2 || formData.age > 100)) {
       errors.personal_age = "Age must be between 2 and 100";
     }
     if (!formData.mobile_no) {
@@ -233,9 +231,7 @@ export default function EnForm() {
 
       if (!member.age) {
         memberError.age = "Age is required";
-      } else if (
-        member.age && (member.age < 2 || member.age > 100)
-      ) {
+      } else if (member.age && (member.age < 2 || member.age > 100)) {
         memberError.age = "Age must be between 2-100";
       }
 
@@ -557,9 +553,8 @@ export default function EnForm() {
                       country={countryCode}
                       enableSearch={true}
                       onChange={(phone, country, e, formattedValue) => {
-                          handleInputChange("mobile_no", formattedValue);
-                        }}
-
+                        handleInputChange("mobile_no", formattedValue);
+                      }}
                       inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
                         formErrors.personal_mobile_no
                           ? "border-red-500"
@@ -1026,7 +1021,11 @@ export default function EnForm() {
                           enableSearch={true}
                           value={member.mobile_no}
                           onChange={(phone, country, e, formattedValue) =>
-                            handleMemberChange(index, "mobile_no", formattedValue)
+                            handleMemberChange(
+                              index,
+                              "mobile_no",
+                              formattedValue
+                            )
                           }
                           inputClass={`w-full px-3 py-2 border !w-full !bg-white !text-sm px-3 py-5 ${
                             formErrors.members &&
