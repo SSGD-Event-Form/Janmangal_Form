@@ -157,36 +157,11 @@ export default function SevakForm() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validate all required fields
-    const requiredFields = {
-      name: "નામ",
-      father_name: "પિતાનું નામ",
-      surname: "અટક",
-      address: "સરનામું",
-      village: "ગામ",
-      taluka: "તાલુકો",
-      district: "જીલ્લો",
-      education: "અભ્યાસ",
-      business: "વ્યવસાય",
-      saint_or_devotee_name: "પરિચિત સંત કે હરિભક્તનું નામ",
-      birth_date: "જન્મ તારીખ",
-      mobile_no: "મોબાઇલ નંબર",
-      seva_days: "સેવા દિવસો",
-      department: "વિભાગ",
-      photo: "ફોટો",
-    };
+   
 
-    // Check for empty required fields
-    const emptyFields = Object.entries(requiredFields).filter(
-      ([key]) => !formData[key]
-    );
+    
 
-    if (emptyFields.length > 0) {
-      const missingFields = emptyFields.map(([_, label]) => label).join(", ");
-      toast.error(`કૃપા કરીને આ ફીલ્ડ ભરો: ${missingFields}`);
-      setIsSubmitting(false);
-      return;
-    }
+    
 
     // Validate mobile number format
     if (formData.mobile_no && formData.mobile_no.length < 10) {
@@ -269,9 +244,7 @@ export default function SevakForm() {
         formDataObj.append("photo", formData.photo);
       }
 
-     
-
-      const response = await axios.post(
+      await axios.post(
         "https://api.janmangal.ssgd.org/api/volunteer",
         formDataObj,
         {
@@ -281,12 +254,9 @@ export default function SevakForm() {
         }
       );
 
-      
-        toast.success("‍ફોર્મ સફળતાપૂર્વક સબમિટ થઇ ગયું છે");
-       
+      toast.success("ફોર્મ સફળતાપૂર્વક સબમિટ થઇ ગયું છે");
     } catch (error) {
       console.error("Error submitting form:", error);
-      
     } finally {
       setIsSubmitting(false);
     }
@@ -483,11 +453,10 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="name"
-                    value={formData.name}
+                    value={formData.name || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="નામ"
-                    required
                   />
                 </div>
                 <div>
@@ -497,11 +466,10 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="father_name"
-                    value={formData.father_name}
+                    value={formData.father_name || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="પિતાનું નામ"
-                    required
                   />
                 </div>
                 <div>
@@ -511,11 +479,10 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="surname"
-                    value={formData.surname}
+                    value={formData.surname || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="અટક"
-                    required
                   />
                 </div>
               </div>
@@ -528,11 +495,10 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="education"
-                    value={formData.education}
+                    value={formData.education || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="તમારો અભ્યાસ દાખલ કરો"
-                    required
                   />
                 </div>
                 <div>
@@ -542,11 +508,10 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="business"
-                    value={formData.business}
+                    value={formData.business || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="તમારો વ્યવસાય દાખલ કરો"
-                    required
                   />
                 </div>
                 <div>
@@ -619,7 +584,6 @@ export default function SevakForm() {
                     placeholderText="તારીખ પસંદ કરો"
                     dateFormat="dd-MM-yyyy"
                     className="w-full px-3 py-2 border rounded-md"
-                    required
                     maxDate={new Date()}
                     showYearDropdown
                     scrollableYearDropdown
@@ -671,13 +635,10 @@ export default function SevakForm() {
                   <input
                     type="number"
                     name="age"
-                    value={formData.age}
+                    value={formData.age || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="ઉમર"
-                    min="0"
-                    max="100"
-                    required
                   />
                 </div>
               </div>
@@ -689,12 +650,11 @@ export default function SevakForm() {
                   </label>
                   <textarea
                     name="address"
-                    value={formData.address}
+                    value={formData.address || ""}
                     onChange={handleChange}
                     className="w-full px-3 py-2 border rounded-md"
                     placeholder="તમારું સરનામું દાખલ કરો"
                     rows="3"
-                    required
                   ></textarea>
 
                   <div className="grid sm:grid-cols-1 md:grid-cols-3 gap-3 mt-3">
@@ -705,11 +665,10 @@ export default function SevakForm() {
                       <input
                         type="text"
                         name="village"
-                        value={formData.village}
+                        value={formData.village || ""}
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-md"
                         placeholder="ગામ"
-                        required
                       />
                     </div>
                     <div>
@@ -723,7 +682,6 @@ export default function SevakForm() {
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-md"
                         placeholder="તાલુકો"
-                        required
                       />
                     </div>
                     <div>
@@ -737,7 +695,6 @@ export default function SevakForm() {
                         onChange={handleChange}
                         className="w-full px-3 py-2 border rounded-md"
                         placeholder="જીલ્લો"
-                        required
                       />
                     </div>
                   </div>
@@ -802,7 +759,6 @@ export default function SevakForm() {
                         className="hidden"
                         accept="image/*"
                         onChange={handleFileSelect}
-                        required={!formData.photo}
                       />
                     </label>
                   </div>
@@ -928,9 +884,6 @@ export default function SevakForm() {
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                       placeholder="દિવસની સંખ્યા"
-                      min="1"
-                      max="30"
-                      required
                     />
                   </div>
                 </div>
@@ -1065,9 +1018,6 @@ export default function SevakForm() {
                       onChange={handleChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md"
                       placeholder="દિવસની સંખ્યા"
-                      min="1"
-                      max="30"
-                      required
                     />
                   </div>
                 </div>
@@ -1194,9 +1144,9 @@ export default function SevakForm() {
                   <input
                     type="text"
                     name="saint_or_devotee_name"
-                    value={formData.saint_or_devotee_name}
+                    value={formData.saint_or_devotee_name || ""}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                    className="w-full px-3 py-2 border rounded-md"
                     placeholder="પરિચિત સંત કે હરિભક્તનું નામ"
                   />
                 </div>
