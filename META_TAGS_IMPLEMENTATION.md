@@ -6,14 +6,14 @@ This implementation provides dynamic Open Graph (OG) meta tags that change based
 ## Features
 
 ### 1. Dynamic OG Title Updates
-- **Home Page (`/`)**: `જનમંગલ મહોત્સવ - 2026`
-- **Utara Forms (`/gu`, `/en`)**: `જનમંગલ મહોત્સવ - તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬ (ઉતારા વ્યવસ્થા ફોર્મ)`
-- **Swayam Sevak Form (`/swayamsevak-form`)**: `જનમંગલ મહોત્સવ - સ્વયંસેવક ફોર્મ`
+- **Home Page (`/`)**: `જનમંગલ મહોત્સવ ૨૦૨૬ - તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬ (ઉતારા વ્યવસ્થા ફોર્મ)`
+- **Utara Forms (`/gu`, `/en`)**: `જનમંગલ મહોત્સવ ૨૦૨૬ - તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬ (ઉતારા વ્યવસ્થા ફોર્મ)`
+- **Swayam Sevak Form (`/swayamsevak-form`)**: `જનમંગલ મહોત્સવ ૨૦૨૬ - સ્વયંસેવક ફોર્મ`
 
 ### 2. Dynamic OG Description Updates
-- **Home Page**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા`
-- **Utara Forms**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા`
-- **Swayam Sevak Form**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા - સ્વયંસેવક ફોર્મ`
+- **Home Page**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા | તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬ (ઉતારા વ્યવસ્થા ફોર્મ)`
+- **Utara Forms**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા | તા. ૦૨-૦૧-૨૦૨૬ થી ૦૮-૦૧-૨૦૨૬ (ઉતારા વ્યવસ્થા ફોર્મ)`
+- **Swayam Sevak Form**: `શ્રી સ્વામિનારાયણ સંસ્કારધામ ગુરૂકુલ - ધ્રાંગધ્રા | સ્વયંસેવક ફોર્મ`
 
 ### 3. Navigation Links
 - Added links to the Swayam Sevak form from both Gujarati and English forms
