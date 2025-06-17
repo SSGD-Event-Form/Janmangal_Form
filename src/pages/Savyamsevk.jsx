@@ -390,8 +390,8 @@ export default function SevakForm() {
     if (!cropper) return;
 
     const canvas = cropper.getCroppedCanvas({
-      width: 300,
-      height: 300,
+      width: 350, // Passport size ratio
+      height: 450,
       fillColor: "#fff",
       imageSmoothingEnabled: true,
       imageSmoothingQuality: "high",
@@ -401,7 +401,7 @@ export default function SevakForm() {
       canvas.toBlob(
         (blob) => {
           if (blob) {
-            const file = new File([blob], "profile-photo.jpg", {
+            const file = new File([blob], "passport-photo.jpg", {
               type: "image/jpeg",
             });
             setFormData({ ...formData, photo: file });
@@ -705,7 +705,7 @@ export default function SevakForm() {
                     ફોટો અપલોડ કરો*
                   </label>
                   <div className="flex items-center">
-                    <label className="flex flex-col items-center justify-center p-3 w-52 h-44 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <label className="flex flex-col items-center justify-center p-3 w-[150px] h-[180px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
                       {croppedImage ? (
                         <div className="flex flex-col items-center justify-center w-full h-full relative">
                           <img
@@ -810,59 +810,66 @@ export default function SevakForm() {
 
               {/* Crop Modal */}
               {showCropModal && imageSrc && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                  <div className="bg-white p-4 rounded-lg max-w-2xl w-full mx-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-medium">ફોટો ક્રોપ કરો</h3>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2 sm:p-4">
+                  <div className="bg-white rounded-lg w-full max-w-xs sm:max-w-md md:max-w-2xl lg:max-w-4xl xl:max-w-6xl mx-auto h-[95vh] flex flex-col">
+                    {/* Header */}
+                    <div className="flex justify-between items-center p-3 sm:p-4 md:p-6 border-b flex-shrink-0">
+                      <h3 className="text-base sm:text-lg md:text-xl font-medium">ફોટો ક્રોપ કરો</h3>
                       <button
                         onClick={() => {
                           setShowCropModal(false);
                           setImageSrc(null);
                         }}
-                        className="text-gray-500 hover:text-gray-700"
+                        className="text-gray-500 hover:text-gray-700 transition-colors p-1"
                       >
-                        <MdCancel size={24} />
+                        <MdCancel size={20} className="sm:w-6 sm:h-6" />
                       </button>
                     </div>
-                    <div className="max-h-[60vh] overflow-auto">
-                      <Cropper
-                        ref={imageRef}
-                        src={imageSrc}
-                        style={{ height: 400, width: "100%" }}
-                        aspectRatio={1}
-                        guides={true}
-                        autoCropArea={0.8}
-                        background={false}
-                        viewMode={1}
-                        onInitialized={(instance) => setCropper(instance)}
-                        cropBoxMovable={true}
-                        cropBoxResizable={true}
-                        dragMode="move"
-                        responsive={true}
-                        restore={false}
-                        center={true}
-                        highlight={false}
-                        modal={true}
-                        zoomable={true}
-                        zoomOnTouch={true}
-                        zoomOnWheel={true}
-                      />
+                    
+                    {/* Cropper Container */}
+                    <div className="flex-1 min-h-0 p-3 sm:p-4 md:p-6">
+                      <div className="w-full h-full">
+                        <Cropper
+                          ref={imageRef}
+                          src={imageSrc}
+                          style={{ height: "100%", width: "100%" }}
+                          aspectRatio={35 / 45}
+                          guides={true}
+                          autoCropArea={0.8}
+                          background={false}
+                          viewMode={1}
+                          onInitialized={(instance) => setCropper(instance)}
+                          cropBoxMovable={true}
+                          cropBoxResizable={false}
+                          dragMode="move"
+                          responsive={true}
+                          restore={false}
+                          center={true}
+                          highlight={false}
+                          modal={true}
+                          zoomable={true}
+                          zoomOnTouch={true}
+                          zoomOnWheel={true}
+                        />
+                      </div>
                     </div>
-                    <div className="flex justify-end gap-2 mt-4">
+                    
+                    {/* Footer Actions */}
+                    <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 p-3 sm:p-4 md:p-6 border-t bg-gray-50 flex-shrink-0">
                       <button
                         type="button"
                         onClick={() => {
                           setShowCropModal(false);
                           setImageSrc(null);
                         }}
-                        className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                        className="w-full sm:w-auto px-4 py-2 md:px-6 md:py-3 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition-colors text-sm md:text-base font-medium"
                       >
                         રદ કરો
                       </button>
                       <button
                         type="button"
                         onClick={handleCropSubmit}
-                        className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        className="w-full sm:w-auto px-4 py-2 md:px-6 md:py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors text-sm md:text-base font-medium"
                       >
                         ક્રોપ કરો
                       </button>
