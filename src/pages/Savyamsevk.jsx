@@ -30,6 +30,7 @@ export default function SevakForm() {
     Transportation: "પરિવહન વિભાગ",
     Inquiry: "પૂછપરછ વિભાગ",
     Cleaning: "સ્વચ્છતા વિભાગ",
+    Sanskrutik:"સાંસ્કૃતિક વિભાગ",
     "je sope te": "જે સોંપે તે...",
   };
   const [formData, setFormData] = useState({
